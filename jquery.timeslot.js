@@ -4,8 +4,14 @@
     
     return this.each(function(){
       var $timeline = $(this);
+      
+      if( $.fn.disableTextSelect != undefined ) {
+        $timeline.disableTextSelect();
+      }
+      
       var timeline = new Timeline($timeline, options);
       timeline.build_timeline();
+      timeline.init_handlers();
     });
   };
   
@@ -20,6 +26,10 @@
   {
     this.$timeline = $timeline;
     this.options = options;
+    
+    this.slot_began = false;
+    this.start_quarter = null;
+    this.current_level = 1;
   };
   
   Timeline.prototype = {
@@ -51,7 +61,10 @@
         $hour_div = $('<div />').addClass(this.options.hourClass);
         
         for(var q=0; q < 4; q++) {
-          $quarter_div = $('<div />').addClass(this.options.quarterClass).html($('<div />'));
+          $quarter_div = $('<div />')
+            .addClass(this.options.quarterClass)
+            .html($('<div />'))
+            .attr('rel', 1+h*4+q);
           
           $hour_div.append($quarter_div);
         }
@@ -60,6 +73,90 @@
       }
       
     },
+    
+    /**
+     * Initialiaze the handlers
+     */
+    init_handlers: function() {
+      var self = this;
+      
+      this.$timeline.find('.'+this.options.quarterClass).mousedown(function(){
+        var $quarter = $(this);
+        
+        if( self.slot_began == true ) {
+          throw "Not supposed to append !";
+        }
+        
+        self.slot_began = true;
+        self.start_quarter = parseInt($quarter.attr('rel'));
+        self.select_from_to(self.start_quarter, self.start_quarter, self.current_level);
+        
+      });
+      
+      this.$timeline.find('.'+this.options.quarterClass).mousemove(function(){
+        var $quarter = $(this);
+        var quarter_n = parseInt($quarter.attr('rel'));
+        
+        if( self.slot_began ) {
+          self.select_from_to(self.start_quarter, quarter_n, self.current_level);
+        }
+      });
+      
+      this.$timeline.find('.'+this.options.quarterClass).mouseup(function(){
+        
+        self.slot_began = false;
+        self.start_quarter = null;
+        
+      });
+    },
+    
+    /**
+     * Select the quarters with the rel attribute between "from" and "to" arguments
+     * the level of selection is given by the third argument.
+     * If a selection is already made with this level, it will be automatically removed
+     * "from" argument can be greater that "to" argument (selection is reversed).
+     *
+     * @param from : the index of the first quarter to select
+     * @param to : the index of the last quarter to select
+     * @param level : the level of selection
+     */
+    select_from_to: function(from, to, level) {
+      var self = this;
+
+      if( typeof(from) != 'number' ) {
+        throw "Type of 'from' argument is "+typeof(from)+". number espected";
+      }
+      
+      if( typeof(to) != 'number' ) {
+        throw "Type of 'to' argument is "+typeof(from)+". number espected";
+      }
+      
+      // Ensures that from index is smaller that to index.
+      if( from > to ) {
+        var tmp = from;
+        from = to;
+        to = tmp;
+        delete tmp;
+      }
+
+      // Removes unselect quarter of this level
+      self.unselect(level);
+      
+      var level_class = 'level'+level;
+      for(var i=from; i <= to; i++) {
+        self.$timeline.find('[rel='+i+']').addClass(level_class);
+      }
+    },
+    
+    /**
+     * Unselect quarter selected with the given level
+     * 
+     * @param level the level to consider
+     */
+    unselect: function(level) {
+      var level_class = 'level'+level;
+      this.$timeline.find('.'+level_class).removeClass(level_class);
+    }
   };
   
 })(jQuery);

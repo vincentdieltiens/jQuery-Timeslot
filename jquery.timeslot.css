@@ -37,8 +37,21 @@ div.hour div.quarter div {
   background-color: #eee;
   margin-top: 2px;
   height: 6px;
+  cursor: pointer;
 }
 
-div.hour div.quarter div:hover {
-  background-color: #ccc;
+div.hour div.level1 div {
+  background-color: #ffb22c;
+}
+
+div.hour div.level2 div {
+  background-color: #1e6c00;
+}
+
+div.hour div.level3 div {
+  background-color: #003acc;
+}
+
+div.hour div.level4 div {
+  background-color: #bb0000;
 }

@@ -1,12 +1,11 @@
-div.label0 {
-  float: left;
-  width: 33px;
-}
-
 div.label {
   float: left;
   width: 36px;
   font-size: 12px;
+}
+
+div.label:first-child {
+  width: 33px;
 }
 
 div.hour {
@@ -34,6 +33,12 @@ div.hour div.quarter:last-child {
   border-right: 0;
 }
 
-div.hour div.quarter:hover {
-  background-color: #880000;
+div.hour div.quarter div {
+  background-color: #eee;
+  margin-top: 2px;
+  height: 6px;
+}
+
+div.hour div.quarter div:hover {
+  background-color: #ccc;
 }

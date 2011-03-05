@@ -44,6 +44,8 @@
     this.slot_began = false;
     this.$start_quarter = null;
     this.start_quarter_n = -1;
+    this.$stop_quarter = null;
+    this.stop_quarter_n = -1;
     this.current_level = 1;
   };
   
@@ -105,6 +107,8 @@
         self.slot_began = true;
         self.$start_quarter = $quarter;
         self.start_quarter_n = parseInt($quarter.attr('rel'));
+        self.$stop_quarter = $quarter;
+        self.stop_quarter_n = parseInt($quarter.attr('rel'));
         self.select_from_to(self.start_quarter_n, self.start_quarter_n, self.current_level);
         
       });
@@ -114,31 +118,53 @@
         var quarter_n = parseInt($quarter.attr('rel'));
         
         if( self.slot_began ) {
+          self.$stop_quarter = $quarter;
+          self.stop_quarter_n = quarter_n;
           self.select_from_to(self.start_quarter_n, quarter_n, self.current_level);
         }
       });
       
-      this.$timeline.find('.'+this.options.quarterClass).mouseup(function(e){
-        var $quarter = $(this);
-        var quarter_n = parseInt($quarter.attr('rel'));
+      $(document).mouseup(function(e){
         
-        var from = self.start_quarter_n;
-        var to = quarter_n;
-        var level = self.current_level;
-        
-        if( typeof(self.options.onSelectSlot) == 'function' ) {
-          self.options.onSelectSlot.call(this, from, to, level, e);
+        if( self.slot_began == false ) {
+          return;
         }
         
+        if( !$(this).hasClass(self.options.quarterClass) )
+          self.set_slot(self.$stop_quarter, e);
+        else {
+          var $quarter = $(this);
+          self.set_slot($quarter, e);
+        }
+      });
+    },
+    
+    set_slot: function($quarter, e) {
+      var self = this;
+      
+      var quarter_n = parseInt($quarter.attr('rel'));
+      
+      var from = self.start_quarter_n;
+      var to = quarter_n;
+      var level = self.current_level;
+      
+      if( typeof(self.options.onSelectSlot) == 'function' ) {
+        self.options.onSelectSlot.call(this, from, to, level, e);
+      }
+      
+      if( self.start_quarter_n < quarter_n ) {
         self.add_indicator(self.start_quarter_n, level);
         self.add_indicator(quarter_n+1, level);
-        
-        self.slot_began = false;
-        self.$start_quarter = null;
-        self.start_quarter_n = -1;
-        self.current_level += 1;
-        
-      });
+      } else {
+        self.add_indicator(self.start_quarter_n+1, level);
+        self.add_indicator(quarter_n, level);
+      }
+      
+      
+      self.slot_began = false;
+      self.$start_quarter = null;
+      self.start_quarter_n = -1;
+      self.current_level += 1;
     },
     
     /**

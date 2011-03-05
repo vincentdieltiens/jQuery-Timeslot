@@ -1,0 +1,39 @@
+div.label0 {
+  float: left;
+  width: 33px;
+}
+
+div.label {
+  float: left;
+  width: 36px;
+  font-size: 12px;
+}
+
+div.hour {
+  float: left;
+  width: 35px;
+  height: 16px;
+  border-left: 1px solid #000;
+}
+
+div.hour:last-child {
+  border-right: 1px solid #000;
+}
+
+div.hour div.quarter {
+  margin-top: 3px;
+  width: 8px;
+  height: 10px;
+  float: left;
+  border-right: 1px solid #000;
+  cursor: pointer;
+  position: relative;
+}
+
+div.hour div.quarter:last-child {
+  border-right: 0;
+}
+
+div.hour div.quarter:hover {
+  background-color: #880000;
+}

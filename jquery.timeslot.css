@@ -41,23 +41,61 @@ div.hour div.quarter:last-child {
 
 div.hour div.quarter div {
   background-color: #eee;
-  margin-top: 2px;
   height: 6px;
   cursor: pointer;
+  position: absolute;
+  top: 2px;
+  width: 100%;
+  z-index: 1;
 }
 
-div.hour div.level1 div {
+div.hour div.quarter div.level1 {
   background-color: #ffb22c;
+  
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  z-index: 2;
+  filter:alpha(opacity=50);   /* Internet Explorer       */
+  -moz-opacity:0.5;           /* Mozilla 1.6 and below   */
+  opacity: 0.5;               /* newer Mozilla and CSS-3 */
 }
 
-div.hour div.level2 div {
+div.hour div.quarter div.level2 {
   background-color: #1e6c00;
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  z-index: 3;
+  filter:alpha(opacity=50);   /* Internet Explorer       */
+  -moz-opacity:0.5;           /* Mozilla 1.6 and below   */
+  opacity: 0.5;               /* newer Mozilla and CSS-3 */
 }
 
-div.hour div.level3 div {
+div.hour div.quarter div.level3 {
   background-color: #003acc;
+  top: 2px;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  z-index: 4;
+  filter:alpha(opacity=50);   /* Internet Explorer       */
+  -moz-opacity:0.5;           /* Mozilla 1.6 and below   */
+  opacity: 0.5;               /* newer Mozilla and CSS-3 */
 }
 
-div.hour div.level4 div {
+div.hour div.quarter div.level4 {
   background-color: #bb0000;
+  top: 2px;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  z-index: 5;
+  filter:alpha(opacity=50);   /* Internet Explorer       */
+  -moz-opacity:0.5;           /* Mozilla 1.6 and below   */
+  opacity: 0.5;               /* newer Mozilla and CSS-3 */
 }

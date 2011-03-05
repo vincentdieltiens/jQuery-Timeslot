@@ -184,7 +184,8 @@
      */
     add_indicator: function(quarter_n, level) {
       var $indicator = $('<img />')
-        .attr('src', 'images/indicator_level'+level+'.gif');
+        .attr('src', 'images/indicator_level'+level+'.gif')
+        .addClass('indicator'+level);
       
       this.$timeline.append($indicator);
       var $quarter = this.get_quarter(quarter_n);
@@ -237,7 +238,8 @@
       
       var level_class = 'level'+level;
       for(var i=from; i <= to; i++) {
-        self.get_quarter(i).addClass(level_class);
+        var div = $('<div />').addClass(level_class);
+        self.get_quarter(i).append(div);
       }
     },
     
@@ -248,7 +250,8 @@
      */
     unselect: function(level) {
       var level_class = 'level'+level;
-      this.$timeline.find('.'+level_class).removeClass(level_class);
+      this.$timeline.find('.'+level_class).remove();
+      this.$timeline.find('.indicator'+level).remove();
     }
   };
   

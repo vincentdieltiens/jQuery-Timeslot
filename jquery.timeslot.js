@@ -98,6 +98,11 @@
       var self = this;
       
       this.$timeline.find('.'+this.options.quarterClass).mousedown(function(){
+        
+        if( self.current_level > self.options.maxNumberSlot ) {
+          return false;
+        }
+        
         var $quarter = $(this);
         
         if( self.slot_began == true ) {
@@ -131,40 +136,47 @@
         }
         
         if( !$(this).hasClass(self.options.quarterClass) )
-          self.set_slot(self.$stop_quarter, e);
+          self.set_slot(self.start_quarter_n, self.stop_quarter_n);
         else {
           var $quarter = $(this);
-          self.set_slot($quarter, e);
+          var quarter_n = parseInt($quarter.attr('rel'));
+          self.set_slot(self.start_quarter_n, quarter_n);
         }
       });
     },
     
-    set_slot: function($quarter, e) {
+    set_slot: function(start_quarter_n, stop_quarter_n) {
       var self = this;
       
-      var quarter_n = parseInt($quarter.attr('rel'));
+      if( start_quarter_n > stop_quarter_n ) {
+        var tmp = start_quarter_n;
+        var start_quarter_n = stop_quarter_n;
+        var stop_quarter_n = tmp;
+        delete tmp;
+      }
       
-      var from = self.start_quarter_n;
-      var to = quarter_n;
+      var $start_quarter = self.get_quarter(start_quarter_n);
+      var $stop_quarter = self.get_quarter(stop_quarter_n);
+      
+      var from = start_quarter_n;
+      var to = stop_quarter_n;
       var level = self.current_level;
       
       if( typeof(self.options.onSelectSlot) == 'function' ) {
-        self.options.onSelectSlot.call(this, from, to, level, e);
+        self.options.onSelectSlot.call(this, from, to, level);
       }
       
-      if( self.start_quarter_n < quarter_n ) {
-        self.add_indicator(self.start_quarter_n, level);
-        self.add_indicator(quarter_n+1, level);
-      } else {
-        self.add_indicator(self.start_quarter_n+1, level);
-        self.add_indicator(quarter_n, level);
-      }
-      
+      self.add_indicator(start_quarter_n, level);
+      self.add_indicator(stop_quarter_n+1, level);
       
       self.slot_began = false;
       self.$start_quarter = null;
       self.start_quarter_n = -1;
+      self.$stop_quarter_n = null;
+      self.stop_quarter_n = -1;
       self.current_level += 1;
+      
+      return self.current_level-1;
     },
     
     /**
@@ -175,7 +187,7 @@
         .attr('src', 'images/indicator_level'+level+'.gif');
       
       this.$timeline.append($indicator);
-      var $quarter = this.$timeline.find('[rel='+quarter_n+']');
+      var $quarter = this.get_quarter(quarter_n);
       var left = $quarter.position().left - $indicator.width()/2;
       var top = this.$timeline.height();
       $indicator.css({
@@ -184,6 +196,11 @@
           'top': top+'px'
         });
       
+    },
+    
+    get_quarter: function(index)
+    {
+      return this.$timeline.find('[rel='+index+']');
     },
     
     /**
@@ -220,7 +237,7 @@
       
       var level_class = 'level'+level;
       for(var i=from; i <= to; i++) {
-        self.$timeline.find('[rel='+i+']').addClass(level_class);
+        self.get_quarter(i).addClass(level_class);
       }
     },
     

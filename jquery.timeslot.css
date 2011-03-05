@@ -2,6 +2,12 @@ div.label {
   float: left;
   width: 36px;
   font-size: 12px;
+  height: 16px;
+}
+
+#timeline {
+  position: relative;
+  height: 35px;
 }
 
 div.label:first-child {

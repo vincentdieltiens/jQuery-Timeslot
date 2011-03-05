@@ -19,7 +19,21 @@
     labelClass: 'label',
     hourClass: 'hour',
     quarterClass: 'quarter',
-    maxNumberSlot: 3
+    maxNumberSlot: 3,
+    /**
+     * @param from 
+     * @param to
+     * @param level
+     * @param event
+     */
+    onSelectSlot: function(from, to, level, event) {},
+    /**
+     * @param from
+     * @param to
+     * @param level
+     * @param event
+     */
+    onChangeSlot: function(from, to, level, event) {}
   };
   
   function Timeline($timeline, options)
@@ -28,7 +42,8 @@
     this.options = options;
     
     this.slot_began = false;
-    this.start_quarter = null;
+    this.$start_quarter = null;
+    this.start_quarter_n = -1;
     this.current_level = 1;
   };
   
@@ -88,8 +103,9 @@
         }
         
         self.slot_began = true;
-        self.start_quarter = parseInt($quarter.attr('rel'));
-        self.select_from_to(self.start_quarter, self.start_quarter, self.current_level);
+        self.$start_quarter = $quarter;
+        self.start_quarter_n = parseInt($quarter.attr('rel'));
+        self.select_from_to(self.start_quarter_n, self.start_quarter_n, self.current_level);
         
       });
       
@@ -98,16 +114,50 @@
         var quarter_n = parseInt($quarter.attr('rel'));
         
         if( self.slot_began ) {
-          self.select_from_to(self.start_quarter, quarter_n, self.current_level);
+          self.select_from_to(self.start_quarter_n, quarter_n, self.current_level);
         }
       });
       
-      this.$timeline.find('.'+this.options.quarterClass).mouseup(function(){
+      this.$timeline.find('.'+this.options.quarterClass).mouseup(function(e){
+        var $quarter = $(this);
+        var quarter_n = parseInt($quarter.attr('rel'));
+        
+        var from = self.start_quarter_n;
+        var to = quarter_n;
+        var level = self.current_level;
+        
+        if( typeof(self.options.onSelectSlot) == 'function' ) {
+          self.options.onSelectSlot.call(this, from, to, level, e);
+        }
+        
+        self.add_indicator(self.start_quarter_n, level);
+        self.add_indicator(quarter_n+1, level);
         
         self.slot_began = false;
-        self.start_quarter = null;
+        self.$start_quarter = null;
+        self.start_quarter_n = -1;
+        self.current_level += 1;
         
       });
+    },
+    
+    /**
+     *
+     */
+    add_indicator: function(quarter_n, level) {
+      var $indicator = $('<img />')
+        .attr('src', 'images/indicator_level'+level+'.gif');
+      
+      this.$timeline.append($indicator);
+      var $quarter = this.$timeline.find('[rel='+quarter_n+']');
+      var left = $quarter.position().left - $indicator.width()/2;
+      var top = this.$timeline.height();
+      $indicator.css({
+          'position': 'absolute',
+          'left': left+'px',
+          'top': top+'px'
+        });
+      
     },
     
     /**

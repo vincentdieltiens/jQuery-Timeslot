@@ -28,7 +28,7 @@
     labelClass: 'label',
     hourClass: 'hour',
     quarterClass: 'quarter',
-    maxNumberSlot: 3,
+    maxNumberSlot: 4,
     /**
      * @param from 
      * @param to
@@ -56,6 +56,9 @@
     this.$stop_quarter = null;
     this.stop_quarter_n = -1;
     this.current_level = 1;
+    
+    this.slot_resized = false;
+    this.indicator_moving = null;
     
     // => z_indexes : level => z_index
     this.z_indexes = new Array();
@@ -243,6 +246,47 @@
       $indicator.mousedown(function(){
         var z_index = self.set_max_z_index(level);
         self.get_quarters(level).css('z-index', z_index);
+        
+        self.slot_resized = true;
+        self.indicator_moving = $(this);
+      });
+      
+      $(window).mousemove(function(e){
+        if( self.slot_resized == true ) {
+          var timeline_left = self.$timeline.position().left;
+          var posX = e.pageX-timeline_left;
+
+          var $new_quarter = null;
+          var consider_next = false;
+          self.$timeline.find('.'+self.options.quarterClass).each(function(){
+            var $current_quarter = $(this);
+            
+            if( consider_next == true ) {
+              $new_quarter = $current_quarter,
+              consider_next = false;
+              return;
+            }
+            
+            if( $current_quarter.position().left <= posX ) {
+              $new_quarter = $current_quarter;
+              
+              if( $current_quarter.position().left + $new_quarter.width()/2 <= posX ) {
+                consider_next = true;
+              }
+
+            }
+            
+          })
+          
+          self.indicator_moving.css('left', $new_quarter.position().left - self.indicator_moving.width()/2);
+        }
+      });
+      
+      $(window).mouseup(function(){
+        if( self.slot_resized == true ) {
+          self.slot_resized = false;
+          self.indicator_moving = null;
+        }
       });
       
     },

@@ -55,9 +55,9 @@ div.hour div.quarter div.level1 {
   left: 0;
   width: 100%;
   height: 6px;
-  filter:alpha(opacity=50);   /* Internet Explorer       */
-  -moz-opacity:0.5;           /* Mozilla 1.6 and below   */
-  opacity: 0.5;               /* newer Mozilla and CSS-3 */
+  /*filter:alpha(opacity=50);   /* Internet Explorer       */
+  /*-moz-opacity:0.5;           /* Mozilla 1.6 and below   */
+  /*opacity: 0.5;               /* newer Mozilla and CSS-3 */
 }
 
 div.hour div.quarter div.level2 {
@@ -67,9 +67,9 @@ div.hour div.quarter div.level2 {
   left: 0;
   width: 100%;
   height: 6px;
-  filter:alpha(opacity=50);   /* Internet Explorer       */
-  -moz-opacity:0.5;           /* Mozilla 1.6 and below   */
-  opacity: 0.5;               /* newer Mozilla and CSS-3 */
+  /*filter:alpha(opacity=50);   /* Internet Explorer       */
+  /*-moz-opacity:0.5;           /* Mozilla 1.6 and below   */
+  /*opacity: 0.5;               /* newer Mozilla and CSS-3 */
 }
 
 div.hour div.quarter div.level3 {
@@ -78,9 +78,9 @@ div.hour div.quarter div.level3 {
   left: 0;
   width: 100%;
   height: 6px;
-  filter:alpha(opacity=50);   /* Internet Explorer       */
-  -moz-opacity:0.5;           /* Mozilla 1.6 and below   */
-  opacity: 0.5;               /* newer Mozilla and CSS-3 */
+  /*filter:alpha(opacity=50);   /* Internet Explorer       */
+  /*-moz-opacity:0.5;           /* Mozilla 1.6 and below   */
+  /*opacity: 0.5;               /* newer Mozilla and CSS-3 */
 }
 
 div.hour div.quarter div.level4 {
@@ -89,9 +89,9 @@ div.hour div.quarter div.level4 {
   left: 0;
   width: 100%;
   height: 6px;
-  filter:alpha(opacity=50);   /* Internet Explorer       */
-  -moz-opacity:0.5;           /* Mozilla 1.6 and below   */
-  opacity: 0.5;               /* newer Mozilla and CSS-3 */
+  /*filter:alpha(opacity=50);   /* Internet Explorer       */
+  /*-moz-opacity:0.5;           /* Mozilla 1.6 and below   */
+  /*opacity: 0.5;               /* newer Mozilla and CSS-3 */
 }
 
 img.indicator {

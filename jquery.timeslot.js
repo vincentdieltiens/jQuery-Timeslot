@@ -230,6 +230,7 @@
      */
     add_indicator: function(quarter_n, level) {
       var self = this;
+      
       var $indicator = $('<img />')
         .attr('src', 'images/indicator_level'+level+'.gif')
         .addClass('indicator'+level);
@@ -249,46 +250,96 @@
         
         self.slot_resized = true;
         self.indicator_moving = $(this);
+        
       });
       
       $(window).mousemove(function(e){
-        if( self.slot_resized == true ) {
-          var timeline_left = self.$timeline.position().left;
-          var posX = e.pageX-timeline_left;
-
-          var $new_quarter = null;
-          var consider_next = false;
-          self.$timeline.find('.'+self.options.quarterClass).each(function(){
-            var $current_quarter = $(this);
-            
-            if( consider_next == true ) {
-              $new_quarter = $current_quarter,
-              consider_next = false;
-              return;
-            }
-            
-            if( $current_quarter.position().left <= posX ) {
-              $new_quarter = $current_quarter;
-              
-              if( $current_quarter.position().left + $new_quarter.width()/2 <= posX ) {
-                consider_next = true;
-              }
-
-            }
-            
-          })
-          
-          self.indicator_moving.css('left', $new_quarter.position().left - self.indicator_moving.width()/2);
+        if( self.slot_resized != true ) {
+          return;
         }
+        
+        var timeline_left = self.$timeline.position().left;
+        var posX = e.pageX-timeline_left;
+        
+        var $new_quarter = self.position_to_quarter(posX);
+        var new_quarter_n = parseInt($new_quarter.attr('rel'));
+        self.indicator_moving.css('left', $new_quarter.position().left - self.indicator_moving.width()/2);
+        
+        self.select_between_indicators(level);
+        
       });
       
-      $(window).mouseup(function(){
+      $(window).mouseup(function() {
         if( self.slot_resized == true ) {
           self.slot_resized = false;
           self.indicator_moving = null;
         }
       });
       
+    },
+    
+    select_between_indicators: function(level) {
+      var indicators = this.get_indicators(level);
+      
+      var start_index = this.position_to_index(indicators[0].position().left + indicators[0].width()/2);
+      var stop_index = this.position_to_index(indicators[1].position().left + indicators[1].width()/2) - 1;
+      
+      this.select_from_to(start_index, stop_index, level);
+    },
+    
+    get_indicators: function(level) {
+      var indicators = new Array();
+      this.$timeline.find('.indicator'+level).each(function(){
+        indicators.push($(this));
+      });
+      
+      if( indicators.length > 2 ) {
+        throw "More than 2 indicators..."
+      }
+      
+      if( indicators[0].position().left > indicators[1].position().left ) {
+        var tmp = indicators[0];
+        indicators[0] = indicators[1];
+        indicators[1] = tmp;
+        delete tmp;
+      }
+      
+      return indicators;
+    },
+    
+    position_to_index: function(posX) {
+      return parseInt(this.position_to_quarter(posX).attr('rel'));
+    },
+    
+    position_to_quarter: function(posX) {
+      var self = this;
+      
+      var $new_quarter = null;
+      var consider_next = false;
+      self.$timeline.find('.'+self.options.quarterClass).each(function(){
+        var $current_quarter = $(this);
+        
+        if( consider_next ) {
+          $new_quarter = $current_quarter;
+          consider_next = false;
+          
+        }
+        
+        if( $current_quarter.position().left  <= posX ) {
+          $new_quarter = $current_quarter;
+          consider_next = true;
+        }
+        
+      });
+      
+      return $new_quarter;
+    },
+    
+    /**
+     *
+     */
+    get_first_quarter: function(level) {
+      return this.get_quarters(level).first();
     },
     
     /**
@@ -408,11 +459,60 @@
      * 
      * @param level the level to consider
      */
-    unselect: function(level) {
+    unselect: function(level, hideIndicators) {
       var level_class = 'level'+level;
       this.$timeline.find('.'+level_class).remove();
-      this.$timeline.find('.indicator'+level).remove();
+      if( hideIndicators == true ) {
+        this.$timeline.find('.indicator'+level).remove();
+      }
     }
   };
+  
+  function uniqid (prefix, more_entropy) {
+      // +   original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+      // +    revised by: Kankrelune (http://www.webfaktory.info/)
+      // %        note 1: Uses an internal counter (in php_js global) to avoid collision
+      // *     example 1: uniqid();
+      // *     returns 1: 'a30285b160c14'
+      // *     example 2: uniqid('foo');
+      // *     returns 2: 'fooa30285b1cd361'
+      // *     example 3: uniqid('bar', true);
+      // *     returns 3: 'bara20285b23dfd1.31879087'
+      if (typeof prefix == 'undefined') {
+          prefix = "";
+      }
+
+      var retId;
+      var formatSeed = function (seed, reqWidth) {
+          seed = parseInt(seed, 10).toString(16); // to hex str
+          if (reqWidth < seed.length) { // so long we split
+              return seed.slice(seed.length - reqWidth);
+          }
+          if (reqWidth > seed.length) { // so short we pad
+              return Array(1 + (reqWidth - seed.length)).join('0') + seed;
+          }
+          return seed;
+      };
+
+      // BEGIN REDUNDANT
+      if (!this.php_js) {
+          this.php_js = {};
+      }
+      // END REDUNDANT
+      if (!this.php_js.uniqidSeed) { // init seed with big random int
+          this.php_js.uniqidSeed = Math.floor(Math.random() * 0x75bcd15);
+      }
+      this.php_js.uniqidSeed++;
+
+      retId = prefix; // start with prefix, add current milliseconds hex string
+      retId += formatSeed(parseInt(new Date().getTime() / 1000, 10), 8);
+      retId += formatSeed(this.php_js.uniqidSeed, 5); // add seed hex string
+      if (more_entropy) {
+          // for more entropy we add a float lower to 10
+          retId += (Math.random() * 10).toFixed(8).toString();
+      }
+
+      return retId;
+  }
   
 })(jQuery);

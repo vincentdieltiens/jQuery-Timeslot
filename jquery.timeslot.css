@@ -96,5 +96,5 @@ div.hour div.quarter div.level4 {
 
 img.indicator {
   position: absolute;
-  cursor: col-resize;
+  cursor: hand;
 }

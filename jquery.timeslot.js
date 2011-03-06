@@ -226,6 +226,7 @@
      * @param level the level of the indicator to add
      */
     add_indicator: function(quarter_n, level) {
+      var self = this;
       var $indicator = $('<img />')
         .attr('src', 'images/indicator_level'+level+'.gif')
         .addClass('indicator'+level);
@@ -235,12 +236,13 @@
       var left = $quarter.position().left - $indicator.width()/2;
       var top = this.$timeline.height();
       $indicator.css({
-          'left': left+'px',
-          'top': top+'px'
-        }).addClass('indicator');
+        'left': left+'px',
+        'top': top+'px'
+      }).addClass('indicator');
       
       $indicator.mousedown(function(){
-        
+        var z_index = self.set_max_z_index(level);
+        self.get_quarters(level).css('z-index', z_index);
       });
       
     },
@@ -260,13 +262,13 @@
     
     /**
      * Sets the z-index of a level.
-     *
+     * Warn : it's just update the z_indexes array but not the real
+     *    z-index css
      * @param level the level
      * @param z_index the new z-index
      */
     set_z_index: function(level, z_index) {
       this.z_indexes[level] = z_index;
-      this.get_quarters(level).css('z-index', z_index);
     },
     
     /**
@@ -276,6 +278,7 @@
      * @return the z-index set on this level
      */
     set_max_z_index: function(level) {
+      
       var z_index_level = this.get_z_index(level);
       var max_z_index = 0;
       for(var lvl in this.z_indexes) {
@@ -346,11 +349,14 @@
       
       var level_class = 'level'+level;
       var z_index = this.get_z_index(level);
+      if( z_index == null ) {
+        z_index = this.set_max_z_index(level);
+      }
+      
       for(var i=from; i <= to; i++) {
-        var div = $('<div />').addClass(level_class);
+        var div = $('<div />').addClass(level_class).css('z-index', z_index);
         self.get_quarter(i).append(div);
       }
-      self.set_max_z_index(level);
     },
     
     /**

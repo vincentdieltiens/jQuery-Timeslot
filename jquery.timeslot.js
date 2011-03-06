@@ -14,6 +14,14 @@
       timeline.build_timeline();
       timeline.init_handlers();
       
+      if( typeof(options.defaultSlots) == 'object' ) {
+        for( var s in options.defaultSlots ) {
+          var time = options.defaultSlots[s];
+          
+          timeline.set_slot(timeline.hour_to_index(time['start'])+1, timeline.hour_to_index(time['stop']));
+        }
+      }
+      
       timelines.push(timelines);
     });
     
@@ -28,6 +36,7 @@
     labelClass: 'label',
     hourClass: 'hour',
     quarterClass: 'quarter',
+    defaultSlots: [],
     maxNumberSlot: 4,
     /**
      * @param from 
@@ -192,6 +201,7 @@
       
       self.add_indicator(start_quarter_n, level);
       self.add_indicator(stop_quarter_n+1, level);
+      self.select_from_to(start_quarter_n, stop_quarter_n, level);
       
       self.slot_began = false;
       self.$start_quarter = null;
@@ -223,6 +233,19 @@
     },
     
     /**
+     * @param time the time at with the format : hh:ii
+     * @return the index
+     */
+    hour_to_index: function(time) {
+      
+      var infos = time.split(':');
+      var hour = parseInt(infos[0]);
+      var minute = parseInt(infos[1]);
+      
+      return hour * 4 + minute / 15;
+    },
+    
+    /**
      * Adds an indicator at a given position (quarter_n) for a given level
      *
      * @param quarter_n the index of the quarter
@@ -236,13 +259,17 @@
         .addClass('indicator'+level);
       
       this.$timeline.append($indicator);
+
       var $quarter = this.get_quarter(quarter_n);
-      var left = $quarter.position().left - $indicator.width()/2;
-      var top = this.$timeline.height();
-      $indicator.css({
-        'left': left+'px',
-        'top': top+'px'
-      }).addClass('indicator');
+      $indicator.load(function(){
+        var left = $quarter.position().left - $indicator.width()/2;
+        var top = self.$timeline.height();
+        $indicator.css({
+          'left': left+'px',
+          'top': top+'px'
+        }).addClass('indicator');
+      });
+      
       
       $indicator.mousedown(function(){
         var z_index = self.set_max_z_index(level);

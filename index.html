@@ -7,6 +7,7 @@
      <script type="text/javascript">
      $(document).ready(function(){
        var timeline = $('#timeline').timeslot({
+         defaultSlots: [{'start':'10:00', 'stop':'12:00'}],
          onSelectSlot: function(from, to, level) {
            var li = $('<li />').html('add from '+from['hour']+':'+from['minute']+' to '+to['hour']+':'+to['minute']);
            $('#actions').append(li);

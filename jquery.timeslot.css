@@ -46,18 +46,15 @@ div.hour div.quarter div {
   position: absolute;
   top: 2px;
   width: 100%;
-  z-index: 1;
 }
 
 div.hour div.quarter div.level1 {
   background-color: #ffb22c;
-  
   position: absolute;
   top: 2px;
   left: 0;
   width: 100%;
   height: 6px;
-  z-index: 2;
   filter:alpha(opacity=50);   /* Internet Explorer       */
   -moz-opacity:0.5;           /* Mozilla 1.6 and below   */
   opacity: 0.5;               /* newer Mozilla and CSS-3 */
@@ -70,7 +67,6 @@ div.hour div.quarter div.level2 {
   left: 0;
   width: 100%;
   height: 6px;
-  z-index: 3;
   filter:alpha(opacity=50);   /* Internet Explorer       */
   -moz-opacity:0.5;           /* Mozilla 1.6 and below   */
   opacity: 0.5;               /* newer Mozilla and CSS-3 */
@@ -82,7 +78,6 @@ div.hour div.quarter div.level3 {
   left: 0;
   width: 100%;
   height: 6px;
-  z-index: 4;
   filter:alpha(opacity=50);   /* Internet Explorer       */
   -moz-opacity:0.5;           /* Mozilla 1.6 and below   */
   opacity: 0.5;               /* newer Mozilla and CSS-3 */
@@ -94,8 +89,12 @@ div.hour div.quarter div.level4 {
   left: 0;
   width: 100%;
   height: 6px;
-  z-index: 5;
   filter:alpha(opacity=50);   /* Internet Explorer       */
   -moz-opacity:0.5;           /* Mozilla 1.6 and below   */
   opacity: 0.5;               /* newer Mozilla and CSS-3 */
+}
+
+img.indicator {
+  position: absolute;
+  cursor: col-resize;
 }

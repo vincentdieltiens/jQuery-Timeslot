@@ -6,7 +6,7 @@
      <script src="jquery.timeslot.js" type="text/javascript"></script> 
      <script type="text/javascript">
      $(document).ready(function(){
-       $('#timeline').timeslot({
+       var timeline = $('#timeline').timeslot({
          onSelectSlot: function(from, to, level) {
            var li = $('<li />').html('add from '+from['hour']+':'+from['minute']+' to '+to['hour']+':'+to['minute']);
            $('#actions').append(li);

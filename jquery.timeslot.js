@@ -2,7 +2,8 @@
   $.fn.timeslot = function(options){
     var options = $.extend({}, $.fn.timeslot.defaults, options);
     
-    return this.each(function(){
+    var timelines = new Array();
+    this.each(function(){
       var $timeline = $(this);
       
       if( $.fn.disableTextSelect != undefined ) {
@@ -12,7 +13,15 @@
       var timeline = new Timeline($timeline, options);
       timeline.build_timeline();
       timeline.init_handlers();
+      
+      timelines.push(timelines);
     });
+    
+    if( timelines.length == 1 ) {
+      return timelines[0];
+    }
+    
+    return timelines;
   };
   
   $.fn.timeslot.defaults = {
@@ -26,14 +35,14 @@
      * @param level
      * @param event
      */
-    onSelectSlot: function(from, to, level, event) {},
+    onSelectSlot: function(from, to, level) {},
     /**
      * @param from
      * @param to
      * @param level
      * @param event
      */
-    onChangeSlot: function(from, to, level, event) {}
+    onChangeSlot: function(from, to, level) {}
   };
   
   function Timeline($timeline, options)
@@ -47,11 +56,14 @@
     this.$stop_quarter = null;
     this.stop_quarter_n = -1;
     this.current_level = 1;
+    
+    // => z_indexes : level => z_index
+    this.z_indexes = new Array();
   };
   
   Timeline.prototype = {
     /**
-     * Build the html code of the timeline
+     * Builds the html code of the timeline
      */
     build_timeline: function() {
       
@@ -92,7 +104,7 @@
     },
     
     /**
-     * Initialiaze the handlers
+     * Initialiazes the handlers
      */
     init_handlers: function() {
       var self = this;
@@ -145,6 +157,13 @@
       });
     },
     
+    /**
+     * Finalizes the slot starting from start_quarter_n and stop_quarter_n
+     *
+     * @param start_quarter_n the starting index of the slot
+     * @param stop_quarter_n the stoping index of the slot
+     * @return the level of this created slot
+     */
     set_slot: function(start_quarter_n, stop_quarter_n) {
       var self = this;
       
@@ -181,6 +200,12 @@
       return self.current_level-1;
     },
     
+    /**
+     * Gets the hour related to the given index
+     *
+     * @param the index of the hour to retrieve
+     * @return the hour in an array : {'hour':*, 'minute':*} 
+     */
     index_to_hour: function(index) {
       
       var minutes = Math.floor((index % 4)-1);
@@ -195,7 +220,10 @@
     },
     
     /**
+     * Adds an indicator at a given position (quarter_n) for a given level
      *
+     * @param quarter_n the index of the quarter
+     * @param level the level of the indicator to add
      */
     add_indicator: function(quarter_n, level) {
       var $indicator = $('<img />')
@@ -207,16 +235,81 @@
       var left = $quarter.position().left - $indicator.width()/2;
       var top = this.$timeline.height();
       $indicator.css({
-          'position': 'absolute',
           'left': left+'px',
           'top': top+'px'
-        });
+        }).addClass('indicator');
+      
+      $indicator.mousedown(function(){
+        
+      });
       
     },
     
-    get_quarter: function(index)
-    {
+    /**
+     * Gets the z-index index of a level
+     *
+     * @param level the level
+     * @return the z-index or null if there is ot
+     */
+    get_z_index: function(level) {
+      if( level in this.z_indexes ) {
+        return this.z_indexes[level];
+      }
+      return null;
+    },
+    
+    /**
+     * Sets the z-index of a level.
+     *
+     * @param level the level
+     * @param z_index the new z-index
+     */
+    set_z_index: function(level, z_index) {
+      this.z_indexes[level] = z_index;
+      this.get_quarters(level).css('z-index', z_index);
+    },
+    
+    /**
+     * Sets the maximum z-index to a level.
+     *
+     * @param level
+     * @return the z-index set on this level
+     */
+    set_max_z_index: function(level) {
+      var z_index_level = this.get_z_index(level);
+      var max_z_index = 0;
+      for(var lvl in this.z_indexes) {
+        max_z_index = Math.max(max_z_index, this.z_indexes[lvl]);
+      }
+      
+      if( max_z_index == z_index_level ) {
+        return max_z_index;
+      }
+      
+      this.set_z_index(level, max_z_index+1);
+      
+      return max_z_index+1;
+    },
+    
+    /**
+     * Gets the quarter at a given index
+     *
+     * @param index the given index
+     * @return the quarter
+     */
+    get_quarter: function(index) {
       return this.$timeline.find('[rel='+index+']');
+    },
+    
+    /**
+     * Get the quarter of a level
+     *
+     * @param level : the level
+     * @return the quarters
+     */
+    get_quarters: function(level) {
+      var level_class = 'level'+level;
+      return this.$timeline.find('.'+level_class);
     },
     
     /**
@@ -252,10 +345,12 @@
       self.unselect(level);
       
       var level_class = 'level'+level;
+      var z_index = this.get_z_index(level);
       for(var i=from; i <= to; i++) {
         var div = $('<div />').addClass(level_class);
         self.get_quarter(i).append(div);
       }
+      self.set_max_z_index(level);
     },
     
     /**

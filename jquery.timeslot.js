@@ -158,8 +158,10 @@
       var $start_quarter = self.get_quarter(start_quarter_n);
       var $stop_quarter = self.get_quarter(stop_quarter_n);
       
-      var from = start_quarter_n;
-      var to = stop_quarter_n;
+      var from = self.index_to_hour(start_quarter_n);
+      from['index'] = start_quarter_n;
+      var to = self.index_to_hour(stop_quarter_n+1);
+      to['index'] = stop_quarter_n;
       var level = self.current_level;
       
       if( typeof(self.options.onSelectSlot) == 'function' ) {
@@ -177,6 +179,19 @@
       self.current_level += 1;
       
       return self.current_level-1;
+    },
+    
+    index_to_hour: function(index) {
+      
+      var minutes = Math.floor((index % 4)-1);
+      var hours = Math.floor((index - minutes)/4);
+      if( minutes > 0 ) {
+        minutes = 15 * minutes;
+      } else if( minutes < 0 ) {
+        hours -= 1;
+        minutes = 60 + (15*minutes);
+      }
+      return {'hour':hours, 'minute': minutes};
     },
     
     /**

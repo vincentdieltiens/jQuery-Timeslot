@@ -6,11 +6,18 @@
      <script src="jquery.timeslot.js" type="text/javascript"></script> 
      <script type="text/javascript">
      $(document).ready(function(){
-       $('#timeline').timeslot();
+       $('#timeline').timeslot({
+         onSelectSlot: function(from, to, level) {
+           var li = $('<li />').html('add from '+from['hour']+':'+from['minute']+' to '+to['hour']+':'+to['minute']);
+           $('#actions').append(li);
+         }
+       });
      });
      </script>
   </head>
   <body>
     <div id="timeline"></div>
+    <ul id="actions">
+    </ul>
   </body>
 </html>

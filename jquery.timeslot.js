@@ -2,6 +2,11 @@
   $.fn.timeslot = function(options){
     var options = $.extend({}, $.fn.timeslot.defaults, options);
     
+    if( options.imageDirectory != '' ) {
+      if( options.imageDirectory.charAt(options.imageDirectory.length-1) != '/' )
+        options.imageDirectory += '/';
+    }
+    
     var timelines = new Array();
     this.each(function(){
       var $timeline = $(this);
@@ -15,14 +20,13 @@
       timeline.init_handlers();
       
       if( typeof(options.defaultSlots) == 'object' ) {
-        for( var s in options.defaultSlots ) {
-          var time = options.defaultSlots[s];
-          
-          timeline.set_slot(timeline.hour_to_index(time['start'])+1, timeline.hour_to_index(time['stop']));
-        }
+        
+        options.defaultSlots.forEach(function(time){
+          timeline.set_slot(timeline.hour_to_index(time['start'])+1, timeline.hour_to_index(time['stop']), true);
+        })
       }
       
-      timelines.push(timelines);
+      timelines.push(timeline);
     });
     
     if( timelines.length == 1 ) {
@@ -36,8 +40,9 @@
     labelClass: 'label',
     hourClass: 'hour',
     quarterClass: 'quarter',
-    defaultSlots: [],
+    defaultSlots: null,
     maxNumberSlot: 4,
+    imageDirectory: 'images',
     /**
      * @param from 
      * @param to
@@ -176,7 +181,7 @@
      * @param stop_quarter_n the stoping index of the slot
      * @return the level of this created slot
      */
-    set_slot: function(start_quarter_n, stop_quarter_n) {
+    set_slot: function(start_quarter_n, stop_quarter_n, isDefault) {
       var self = this;
       
       if( start_quarter_n > stop_quarter_n ) {
@@ -195,8 +200,9 @@
       to['index'] = stop_quarter_n;
       var level = self.current_level;
       
+      var isDefault = (isDefault != undefined && isDefault == true) ? true : false;
       if( typeof(self.options.onSelectSlot) == 'function' ) {
-        self.options.onSelectSlot.call(this, from, to, level);
+        self.options.onSelectSlot.call(this, from, to, level, isDefault);
       }
       
       self.add_indicator(start_quarter_n, level);
@@ -212,6 +218,7 @@
       
       return self.current_level-1;
     },
+
     
     /**
      * Gets the hour related to the given index
@@ -255,19 +262,24 @@
       var self = this;
       
       var $indicator = $('<img />')
-        .attr('src', 'images/indicator_level'+level+'.gif')
+        .attr('src', self.options.imageDirectory+'indicator_level'+level+'.gif')
         .addClass('indicator'+level);
       
       this.$timeline.append($indicator);
 
       var $quarter = this.get_quarter(quarter_n);
       $indicator.load(function(){
+        
+        $indicator.addClass('indicator');
+        
         var left = $quarter.position().left - $indicator.width()/2;
         var top = self.$timeline.height();
+        
         $indicator.css({
           'left': left+'px',
           'top': top+'px'
-        }).addClass('indicator');
+        })
+        
       });
       
       
@@ -369,6 +381,10 @@
       return this.get_quarters(level).first();
     },
     
+    get_last_quarter: function(level) {
+      return this.get_quarters(level).last();
+    },
+    
     /**
      * Gets the z-index index of a level
      *
@@ -403,6 +419,7 @@
       
       var z_index_level = this.get_z_index(level);
       var max_z_index = 0;
+      
       for(var lvl in this.z_indexes) {
         max_z_index = Math.max(max_z_index, this.z_indexes[lvl]);
       }
@@ -492,6 +509,26 @@
       if( hideIndicators == true ) {
         this.$timeline.find('.indicator'+level).remove();
       }
+    },
+  
+    clear: function() {
+      
+      //this.$timeline.find('div').remove();
+
+      this.slot_began = false;
+      this.$start_quarter = null;
+      this.start_quarter_n = -1;
+      this.$stop_quarter = null;
+      this.stop_quarter_n = -1;
+      this.current_level = 1;
+
+      this.slot_resized = false;
+      this.indicator_moving = null;
+
+      // => z_indexes : level => z_index
+      this.z_indexes = new Array();
+      
+      
     }
   };
   

@@ -5,9 +5,10 @@ div.label {
   height: 16px;
 }
 
-#timeline {
+
+#time_line, #timeline {
   position: relative;
-  height: 35px;
+  height: 35px;         /* height in very important ! */
 }
 
 div.label:first-child {
@@ -97,4 +98,5 @@ div.hour div.quarter div.level4 {
 img.indicator {
   position: absolute;
   cursor: hand;
+  width: 9px;         /* very important !*/
 }

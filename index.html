@@ -13,13 +13,28 @@
            $('#actions').append(li);
          }
        });
+       
+       var timeline = $('#timeline2').timeslot({
+           defaultSlots: [],
+           onSelectSlot: function(from, to, level) {
+              var li = $('<li />').html('add from '+from['hour']+':'+from['minute']+' to '+to['hour']+':'+to['minute']);
+              $('#actions2').append(li);
+            }
+        });
+        
+        
      });
      </script>
   </head>
   <body>
-    <h1>de</h1>
+    <h1>Test 1</h1>
     <div id="timeline"></div>
     <ul id="actions">
+    </ul>
+    
+    <h1>Test 2</h1>
+    <div id="timeline2" style="margin-left: 200px;"></div>
+    <ul id="actions2">
     </ul>
   </body>
 </html>

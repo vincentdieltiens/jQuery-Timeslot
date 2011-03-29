@@ -7,6 +7,8 @@
         options.imageDirectory += '/';
     }
     
+    
+    
     var timelines = new Array();
     this.each(function(){
       var $timeline = $(this);
@@ -265,6 +267,7 @@
         .attr('src', self.options.imageDirectory+'indicator_level'+level+'.gif')
         .addClass('indicator'+level);
       
+      
       this.$timeline.append($indicator);
 
       var $quarter = this.get_quarter(quarter_n);
@@ -285,6 +288,7 @@
       
       $indicator.mousedown(function(){
         var z_index = self.set_max_z_index(level);
+        
         self.get_quarters(level).css('z-index', z_index);
         
         self.slot_resized = true;
@@ -292,12 +296,18 @@
         
       });
       
+      //alert( this.$timeline.offset() );
+      
       $(window).mousemove(function(e){
         if( self.slot_resized != true ) {
           return;
         }
         
-        var timeline_left = self.$timeline.position().left;
+        /*self.$timeline.find('[rel=1]').each(function(){
+          
+        })*/
+
+        var timeline_left = self.$timeline.offset().left;
         var posX = e.pageX-timeline_left;
         
         var $new_quarter = self.position_to_quarter(posX);
@@ -420,9 +430,10 @@
       var z_index_level = this.get_z_index(level);
       var max_z_index = 0;
       
-      for(var lvl in this.z_indexes) {
-        max_z_index = Math.max(max_z_index, this.z_indexes[lvl]);
-      }
+      this.z_indexes.forEach(function(z_index){
+        max_z_index = Math.max(max_z_index, z_index);
+      });
+      console.log("max z_index : "+max_z_index);
       
       if( max_z_index == z_index_level ) {
         return max_z_index;
@@ -511,6 +522,9 @@
       }
     },
   
+    /**
+     * Clear all informations
+     */
     clear: function() {
       
       //this.$timeline.find('div').remove();

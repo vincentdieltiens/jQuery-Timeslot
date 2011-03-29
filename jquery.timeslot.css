@@ -6,7 +6,7 @@ div.label {
 }
 
 
-#time_line, #timeline {
+#time_line, #timeline, #timeline2 {
   position: relative;
   height: 35px;         /* height in very important ! */
 }

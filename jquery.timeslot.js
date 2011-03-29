@@ -50,16 +50,16 @@
 		 * @param from 
 		 * @param to
 		 * @param level
-		 * @param event
+		 * @param isDefault
 		 */
-		onSelectSlot: function(from, to, level) {},
+		onSelectSlot: function(from, to, level, event, isDefault) {},
 		/**
 		 * @param from
 		 * @param to
 		 * @param level
-		 * @param event
+		 * @param isDefault
 		 */
-		onChangeSlot: function(from, to, level) {}
+		onChangeSlot: function(from, to, level, event, isDefault) {}
 	};
 	
 	function Timeline($timeline, options)
@@ -266,7 +266,7 @@
 			
 			var $indicator = $('<img />')
 				.attr('src', self.options.imageDirectory+'indicator_level'+level+'.gif')
-				.addClass('indicator'+level);
+				.addClass('indicator'+level).attr('rel', level);
 			
 			
 			this.$timeline.append($indicator);
@@ -316,6 +316,26 @@
 			$(window).mouseup(function() {
 				if( self.slot_resized == true ) {
 					self.slot_resized = false;
+					
+					var level = parseInt(self.indicator_moving.attr('rel'));
+					
+					var $start_quarter = self.get_first_quarter(level).parent('div');
+					var start_quarter_n = parseInt($start_quarter.attr('rel'));
+					
+					var $stop_quarter = self.get_last_quarter(level).parent('div');
+					var stop_quarter_n = parseInt($stop_quarter.attr('rel'));
+					
+					var from = self.index_to_hour(start_quarter_n);
+					from['index'] = start_quarter_n;
+					var to = self.index_to_hour(stop_quarter_n+1);
+					to['index'] = stop_quarter_n;
+					var isDefault = false;
+					
+					if( typeof(self.options.onSelectSlot) == 'function' ) {
+						self.options.onChangeSlot.call(this, from, to, level, isDefault);
+					}
+					
+					
 					self.indicator_moving = null;
 				}
 			});
@@ -534,8 +554,6 @@
 
 			// => z_indexes : level => z_index
 			this.z_indexes = new Array();
-			
-			
 		}
 	};
 	

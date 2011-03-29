@@ -8,15 +8,19 @@
      $(document).ready(function(){
        var timeline = $('#timeline').timeslot({
          defaultSlots: [{'start':'10:00', 'stop':'12:00'}],
-         onSelectSlot: function(from, to, level) {
-           var li = $('<li />').html('add from '+from['hour']+':'+from['minute']+' to '+to['hour']+':'+to['minute']);
-           $('#actions').append(li);
+         onSelectSlot: function(from, to, level, isDefault) {
+             var li = $('<li />').html('add from '+from['hour']+':'+from['minute']+' to '+to['hour']+':'+to['minute']);
+             $('#actions').append(li);
+         },
+         onChangeSlot: function(from, to, level, isDefault) {
+             var li = $('<li />').html('change slot '+level+' from '+from['hour']+':'+from['minute']+' to '+to['hour']+':'+to['minute']);
+             $('#actions').append(li);
          }
        });
        
        var timeline2 = $('#timeline2').timeslot({
            defaultSlots: [],
-           onSelectSlot: function(from, to, level) {
+           onSelectSlot: function(from, to, level, isDefault) {
               var li = $('<li />').html('add from '+from['hour']+':'+from['minute']+' to '+to['hour']+':'+to['minute']);
               $('#actions2').append(li);
             }
@@ -24,7 +28,7 @@
         
         var timeline3 = $('#timeline3').timeslot({
             defaultSlots: [],
-            onSelectSlot: function(from, to, level) {
+            onSelectSlot: function(from, to, level, isDefault) {
                 var li = $('<li />').html('add from '+from['hour']+':'+from['minute']+' to '+to['hour']+':'+to['minute']);
                 $('#actions3').append(li);
             }

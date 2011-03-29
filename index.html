@@ -14,7 +14,7 @@
          }
        });
        
-       var timeline = $('#timeline2').timeslot({
+       var timeline2 = $('#timeline2').timeslot({
            defaultSlots: [],
            onSelectSlot: function(from, to, level) {
               var li = $('<li />').html('add from '+from['hour']+':'+from['minute']+' to '+to['hour']+':'+to['minute']);
@@ -22,19 +22,32 @@
             }
         });
         
-        
+        var timeline3 = $('#timeline3').timeslot({
+            defaultSlots: [],
+            onSelectSlot: function(from, to, level) {
+                var li = $('<li />').html('add from '+from['hour']+':'+from['minute']+' to '+to['hour']+':'+to['minute']);
+                $('#actions3').append(li);
+            }
+        });
      });
      </script>
   </head>
   <body>
-    <h1>Test 1</h1>
+    <h1>Test 1 : Normal</h1>
     <div id="timeline"></div>
     <ul id="actions">
     </ul>
     
-    <h1>Test 2</h1>
+    <h1>Test 2 : with margin-left</h1>
     <div id="timeline2" style="margin-left: 200px;"></div>
     <ul id="actions2">
     </ul>
+    
+    <h1>Test 3 : position: absolute</h1>
+    <div style="position: relative; height: 100px;">
+        <div id="timeline3" style="position: absolute; left: 200px; top: 40px;"></div>
+        <ul id="actions3">
+        </ul>
+    </div>
   </body>
 </html>

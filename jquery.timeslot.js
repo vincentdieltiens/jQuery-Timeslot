@@ -3,8 +3,9 @@
 		var options = $.extend({}, $.fn.timeslot.defaults, options);
 		
 		if( options.imageDirectory != '' ) {
-			if( options.imageDirectory.charAt(options.imageDirectory.length-1) != '/' )
+			if( options.imageDirectory.charAt(options.imageDirectory.length-1) != '/' ) {
 				options.imageDirectory += '/';
+			}
 		}
 		
 		
@@ -160,7 +161,7 @@
 				}
 			});
 			
-			$(document).mouseup(function(e){
+			$(document).mouseup(function(e) {
 				
 				if( self.slot_began == false ) {
 					return;
@@ -271,7 +272,7 @@
 			this.$timeline.append($indicator);
 
 			var $quarter = this.get_quarter(quarter_n);
-			$indicator.load(function(){
+			$indicator.load(function() {
 				
 				$indicator.addClass('indicator');
 				
@@ -286,7 +287,7 @@
 			});
 			
 			
-			$indicator.mousedown(function(){
+			$indicator.mousedown(function() {
 				var z_index = self.set_max_z_index(level);
 				
 				self.get_quarters(level).css('z-index', z_index);
@@ -296,16 +297,10 @@
 				
 			});
 			
-			//alert( this.$timeline.offset() );
-			
-			$(window).mousemove(function(e){
+			$(window).mousemove(function(e) {
 				if( self.slot_resized != true ) {
 					return;
 				}
-				
-				/*self.$timeline.find('[rel=1]').each(function(){
-					
-				})*/
 
 				var timeline_left = self.$timeline.offset().left;
 				var posX = e.pageX-timeline_left;
@@ -371,7 +366,6 @@
 				if( consider_next ) {
 					$new_quarter = $current_quarter;
 					consider_next = false;
-					
 				}
 				
 				if( $current_quarter.position().left	<= posX ) {
@@ -433,8 +427,7 @@
 			this.z_indexes.forEach(function(z_index){
 				max_z_index = Math.max(max_z_index, z_index);
 			});
-			console.log("max z_index : "+max_z_index);
-			
+
 			if( max_z_index == z_index_level ) {
 				return max_z_index;
 			}
